@@ -8,11 +8,12 @@
 ## ⚡ Características Principales
 
 - **100% Independiente y Privado**: Tu base de datos es tuya. Exposure **no** tiene acceso a tus prospectos, números ni clientes.
-- **Funciona Sin Configuración Previa (Modo Demo)**: Podés clonar el proyecto y probarlo de inmediato en tu navegador con datos ficticios para aprender a usarlo antes de conectar tu base.
+- **Funciona Sin Configuración Previa (Modo Demo)**: Podés clonar o descargar el proyecto y usarlo de inmediato en tu navegador con datos ficticios para aprender a usarlo antes de conectar tu base.
+- **Persistencia Real en Supabase con Login Seguro**: Cuando pegás tus credenciales, se activa la conexión en vivo con Supabase, la pantalla de Login con Supabase Auth y la seguridad Row Level Security (RLS) en todas las tablas.
 - **Métricas Oficiales de Exposure**: Leads, Agendas, Show Rate, Calificadas, Close Rate, Cash Cobrado, AOV (Ticket Promedio) y Pipeline Abierto calculados automáticamente con las mismas fórmulas que usamos en las clases.
 - **2 Modos de Complejidad (Lite vs Pro)**:
   - **CRM Lite**: Enfocado en la venta pura (Leads, Agendas, Pipeline Kanban, Ventas, Seguimientos y Dirección Lite).
-  - **CRM Pro**: Para agencias y negocios con equipo (agrega Hub de Marketing con atribución por canal, Hub de Clientes con Onboarding/Salud, Hub de Operaciones y Dirección 360°).
+  - **CRM Pro**: Para agencias y negocios con equipo (agrega Hub de Marketing con atribución por canal y ROI de anuncios, Hub de Clientes con Onboarding/Salud, Hub de Operaciones y Dirección Pro).
 - **5 Estilos Visuales Intercambiables**:
   1. **Minimal**: Limpio, tipográfico, estilo Notion / Linear moderno.
   2. **Cards Dashboard**: Tarjetas visuales modulares de fácil lectura.
@@ -36,22 +37,26 @@ npm install
 ```bash
 npm run dev
 ```
-Abrí [http://localhost:3000](http://localhost:3000) en tu navegador. ¡Listo! Ya estás en el **Modo Demo**.
+Abrí [http://localhost:3000](http://localhost:3000) en tu navegador. ¡Listo! Ya estás en el **Modo Demo** (los datos se guardan en tu navegador sin pedir login).
 
 ---
 
-## 🗄️ Conectar tu propia Base de Datos (Supabase Gratuito)
+## 🔒 Conectar tu propia Base de Datos (Supabase Gratuito)
 
 Cuando quieras cargar tus datos reales:
-1. Creá una cuenta gratuita en [supabase.com](https://supabase.com) y creá un nuevo proyecto.
-2. En Supabase, entrá a **SQL Editor** -> **New query**, copiá el código de `supabase/schema.sql` y hacé click en **Run**.
-3. (Opcional) Si querés cargar datos de ejemplo en tu base, corré también `supabase/seed.sql`.
-4. Creá tu archivo local de variables:
-   ```bash
-   cp .env.example .env.local
+1. Creá tu cuenta gratis en [supabase.com](https://supabase.com) y creá un nuevo proyecto.
+2. En Supabase, entrá a **SQL Editor** -> **New query**, pegá el contenido de `supabase/schema.sql` y hacé click en **Run**.
+3. Desactivá el registro público en **Authentication** -> **Sign In / Providers** (o **Email**) -> desactivá *"Allow new users to sign up"*.
+4. Creá tu usuario de acceso en **Authentication** -> **Users** -> **Add user** -> **Create user**.
+5. Copiá tu **Project URL** y tu clave pública **anon key** (nunca copies la `service_role`) desde **Project Settings** -> **API**.
+6. Creá tu archivo `.env.local` duplicando `.env.example` y pegá tus 2 claves:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key-aqui
    ```
-5. Pegá tu URL y Anon Key de Supabase en `.env.local`.
-6. Reiniciá el servidor (`npm run dev`). El indicador superior cambiará a **"Supabase Conectado"**.
+7. Reiniciá el servidor (`npm run dev`).
+8. Ingresá con el email y contraseña creados en el paso 4.
+9. En el header verás el cartel verde **"Supabase Conectado"**.
 
 ---
 
@@ -63,5 +68,5 @@ Cuando quieras cargar tus datos reales:
 
 ---
 
-## 🔒 Privacidad y Seguridad
-Este template no incluye ninguna API key, token o dato real de Exposure. Todo el almacenamiento ocurre localmente en tu máquina o en tu propia cuenta de Supabase.
+## 🛡️ Privacidad y Seguridad
+Este template no incluye ninguna API key, token o dato real de Exposure. Todo el almacenamiento ocurre localmente en tu navegador (modo demo) o en tu propia cuenta privada de Supabase protegida por Row Level Security.

@@ -13,8 +13,8 @@ Muchos alumnos cometen el error de usar hojas de cálculo desordenadas o pagar $
 
 Este template resuelve exactamente eso:
 - Te da una estructura profesional desde el día 1.
-- No te cobra mensualidades.
-- Es 100% tuyo y privado.
+- No te cobra mensualidades (utiliza el tier gratuito de Supabase y Vercel).
+- Es 100% tuyo y privado: Exposure **no** tiene acceso a tus prospectos ni números.
 - Te calcula las métricas estándar de Exposure para que traigas tus números a las llamadas de coaching.
 
 ---
@@ -38,13 +38,13 @@ Para poder ayudarte a diagnosticar tu negocio en las clases, todos los alumnos d
 
 ## 3. CRM Lite vs CRM Pro: ¿Cuál usar?
 
-En la esquina superior derecha del CRM vas a ver un botón para cambiar entre **Lite** y **Pro**:
+En la barra superior del CRM vas a ver un botón para cambiar entre **Lite** y **Pro**:
 
 - **Usá CRM Lite si estás empezando**:  
   Te muestra solo lo esencial para facturar: tus Leads, Agendas, Pipeline visual, Ventas y Seguimientos. Menos ruido mental, más foco en cerrar llamadas.
 - **Usá CRM Pro si ya tenés equipo o volumen**:  
   Te activa 3 módulos adicionales:
-  - **Marketing**: Para ver de dónde vienen tus ventas (¿Instagram orgánico, Ads de Meta, YouTube o Referidos?).
+  - **Marketing**: Para ver de dónde vienen tus ventas (¿Instagram orgánico, Ads de Meta, YouTube o Referidos?) e ingresar tu inversión publicitaria para medir ROI/ROAS.
   - **Clientes**: Para hacer seguimiento del Onboarding y ver la salud del cliente (Verde / Amarillo / Rojo).
   - **Operaciones**: Para coordinar tareas críticas con tu equipo y evitar cuellos de botella.
 
@@ -53,7 +53,7 @@ En la esquina superior derecha del CRM vas a ver un botón para cambiar entre **
 ## 4. Los 5 Estilos Visuales
 
 En el selector superior podés elegir el look & feel que más te motive trabajar:
-- **Minimal**: Blanco y negro, limpio, estilo Notion/Linear.
+- **Minimal**: Blanco y negro, limpio, estilo Notion / Linear.
 - **Cards**: Tableros modulares con tarjetas fáciles de leer.
 - **Sidebar CRM**: Barra lateral izquierda fija estilo software de agencia.
 - **Cockpit (Command Center)**: Estética oscura con barras de progreso hacia tu meta mensual de facturación.
@@ -61,7 +61,16 @@ En el selector superior podés elegir el look & feel que más te motive trabajar
 
 ---
 
-## 5. Errores Frecuentes y Soluciones
+## 5. Modo Demo vs Supabase Conectado
+
+- **Modo Demo**: No requiere ninguna configuración. Al abrir el proyecto, los datos se guardan en el navegador. Ideal para jugar y entender la dinámica.
+- **Supabase Conectado**: Cuando copiás tus claves en `.env.local`, el CRM se conecta a tu base de datos de Supabase, se activa la pantalla de Login y se protegen todas las tablas con Row Level Security (RLS).
+- **Empezar de Cero**: Con el botón del tacho de basura en el header podés vaciar todos los prospectos de prueba y arrancar tu CRM en blanco para tu negocio.
+- **Subir a Supabase**: Si cargaste datos en modo demo y querés conservarlos al conectar Supabase, el botón con la nube te permite subirlos directamente sin reescribir nada.
+
+---
+
+## 6. Errores Frecuentes y Soluciones
 
 ### *"No me corre npm install"*
 - **Causa**: No tenés Node.js instalado o tenés una versión muy vieja.
