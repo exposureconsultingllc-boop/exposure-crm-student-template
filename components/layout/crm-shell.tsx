@@ -14,7 +14,7 @@ import { CRMHeader } from '@/components/layout/crm-header'
 
 export function CRMShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const { layoutStyle, setLayoutStyle, mode, setMode, metricasLite, leads, agendas, ventas, seguimientos, clientes, tareas } = useCRM()
+  const { layoutStyle, setLayoutStyle, mode, setMode, metricasLite, leads, agendas, ventas, seguimientos, clientes, tareas, isConfigured, supabaseConnected } = useCRM()
 
   const navItems = mode === 'pro' ? [
     { href: '/', label: 'Dirección Pro', icon: BarChart3 },
@@ -209,6 +209,15 @@ export function CRMShell({ children }: { children: React.ReactNode }) {
             <Link href="/" className="font-bold tracking-tight text-white hover:text-neutral-300 transition">
               Exposure CRM <span className="text-[10px] text-neutral-500 font-normal">/ minimal</span>
             </Link>
+            {isConfigured && supabaseConnected ? (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold">
+                Supabase conectado
+              </span>
+            ) : (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
+                Modo demo
+              </span>
+            )}
             <div className="flex items-center gap-1 border-l border-neutral-800 pl-4">
               {navItems.map(item => {
                 const isActive = pathname === item.href

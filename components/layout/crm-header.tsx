@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
   BarChart3, Trello, Users, Calendar, DollarSign, Clock, 
-  Plus, RotateCcw, Megaphone, UserCheck, CheckSquare, Sparkles
+  Plus, RotateCcw, Megaphone, UserCheck, CheckSquare, Sparkles,
+  Database, HardDrive, AlertTriangle, X, Trash2, UploadCloud
 } from 'lucide-react'
 import { useCRM } from '@/context/crm-context'
 import { NewLeadModal } from '@/components/modals/new-lead-modal'
@@ -17,7 +18,24 @@ import { NewTareaModal } from '@/components/modals/new-tarea-modal'
 
 export function CRMHeader() {
   const pathname = usePathname()
-  const { mode, setMode, resetToDemo, leads, agendas, ventas, seguimientos, clientes, tareas } = useCRM()
+  const { 
+    mode, 
+    setMode, 
+    resetToDemo, 
+    clearAllData,
+    syncLocalToSupabase,
+    isConfigured, 
+    supabaseConnected, 
+    supabaseLoading, 
+    supabaseError, 
+    dismissSupabaseError,
+    leads, 
+    agendas, 
+    ventas, 
+    seguimientos, 
+    clientes, 
+    tareas 
+  } = useCRM()
 
   const [modalLead, setModalLead] = useState(false)
   const [modalAgenda, setModalAgenda] = useState(false)
@@ -25,6 +43,7 @@ export function CRMHeader() {
   const [modalSeguimiento, setModalSeguimiento] = useState(false)
   const [modalCliente, setModalCliente] = useState(false)
   const [modalTarea, setModalTarea] = useState(false)
+  const [isSyncing, setIsSyncing] = useState(false)
 
   const liteNav = [
     { href: '/', label: 'Dirección Lite', icon: BarChart3 },
@@ -49,8 +68,33 @@ export function CRMHeader() {
 
   const navItems = mode === 'pro' ? proNav : liteNav
 
+  const handleSync = async () => {
+    if (!confirm('¿Querés copiar los datos actuales a tu base de Supabase?')) return
+    setIsSyncing(true)
+    const res = await syncLocalToSupabase()
+    setIsSyncing(false)
+    alert(res.message)
+  }
+
   return (
     <>
+      {/* ALERTA DE ERROR DE CONEXION SI CORRESPONDE */}
+      {supabaseError && (
+        <div className="bg-amber-500/10 border-b border-amber-500/30 px-6 py-2.5 text-xs text-amber-200 flex items-center justify-between gap-4 z-40 relative">
+          <div className="flex items-center gap-2 max-w-5xl">
+            <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
+            <span>{supabaseError}</span>
+          </div>
+          <button 
+            onClick={dismissSupabaseError}
+            className="p-1 text-amber-400 hover:text-white rounded transition"
+            title="Cerrar aviso"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
       <header className="border-b border-slate-800 bg-[#0d131f]/90 backdrop-blur sticky top-0 z-30 px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -72,6 +116,43 @@ export function CRMHeader() {
                 <p className="text-[11px] text-slate-400 mt-0.5">Control comercial de tu negocio</p>
               </div>
             </Link>
+
+            {/* CARTEL INDICADOR DE ESTADO (PARTE B) */}
+            <div className="hidden sm:flex items-center ml-2">
+              {isConfigured && supabaseConnected ? (
+                <div 
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-semibold text-emerald-300"
+                  title="Conexión en vivo con tu base de datos Supabase"
+                >
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <Database className="h-3 w-3 text-emerald-400" />
+                  <span>Supabase conectado</span>
+                </div>
+              ) : isConfigured && supabaseLoading ? (
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-[11px] text-slate-300">
+                  <span className="h-2 w-2 rounded-full bg-slate-400 animate-ping" />
+                  <span>Conectando...</span>
+                </div>
+              ) : isConfigured && !supabaseConnected ? (
+                <div 
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-[11px] font-medium text-amber-300 cursor-pointer"
+                  onClick={() => alert(supabaseError || 'Error al conectar con Supabase. Usando almacenamiento local.')}
+                  title="Click para ver detalle del error"
+                >
+                  <span className="h-2 w-2 rounded-full bg-amber-400" />
+                  <span>Modo local (error Supabase)</span>
+                </div>
+              ) : (
+                <div 
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-[11px] font-medium text-amber-300"
+                  title="Los cambios se guardan localmente en este navegador. Para persistencia multi-dispositivo, conectá Supabase en .env.local."
+                >
+                  <span className="h-2 w-2 rounded-full bg-amber-400" />
+                  <HardDrive className="h-3 w-3 text-amber-400" />
+                  <span>Modo demo (se guarda en este navegador)</span>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -100,7 +181,7 @@ export function CRMHeader() {
               </button>
             </div>
 
-            {/* BOTONES RÁPIDOS */}
+            {/* BOTONES RAPIDOS */}
             <div className="flex items-center gap-1.5">
               <button 
                 onClick={() => setModalLead(true)}
@@ -143,6 +224,19 @@ export function CRMHeader() {
                 </>
               )}
 
+              {/* BOTON PASAR A SUPABASE SI ESTA CONECTADO */}
+              {isConfigured && supabaseConnected && (
+                <button
+                  onClick={handleSync}
+                  disabled={isSyncing}
+                  title="Subir datos locales a Supabase"
+                  className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-emerald-400 hover:text-emerald-300 hover:border-emerald-500/40 transition disabled:opacity-50"
+                >
+                  <UploadCloud className="h-3.5 w-3.5" />
+                </button>
+              )}
+
+              {/* RESTABLECER DEMO */}
               <button 
                 onClick={() => {
                   if (confirm('¿Restablecer los datos de ejemplo del template?')) resetToDemo()
@@ -152,8 +246,36 @@ export function CRMHeader() {
               >
                 <RotateCcw className="h-3.5 w-3.5" />
               </button>
+
+              {/* BOTON EMPEZAR DE CERO */}
+              <button
+                onClick={() => {
+                  if (confirm('¿Vaciar todo el CRM y empezar de cero? Esta acción borrará leads, agendas, ventas y tareas.')) {
+                    clearAllData()
+                  }
+                }}
+                title="Empezar de cero (vaciar todos los datos)"
+                className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-rose-400/80 hover:text-rose-300 hover:border-rose-500/40 transition"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
             </div>
           </div>
+        </div>
+
+        {/* INDICADOR MOVIL DE ESTADO */}
+        <div className="sm:hidden px-2 pt-2">
+          {isConfigured && supabaseConnected ? (
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-semibold text-emerald-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Supabase conectado</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/25 text-[10px] font-medium text-amber-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+              <span>Modo demo (se guarda en este navegador)</span>
+            </div>
+          )}
         </div>
 
         <div className="max-w-7xl mx-auto flex items-center gap-1 mt-3 pt-2 border-t border-slate-800/60 overflow-x-auto">
