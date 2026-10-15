@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { useCRM } from '@/context/crm-context'
-import { Calendar, Plus, DollarSign, Clock } from 'lucide-react'
+import { Calendar, Plus, DollarSign, Clock, Trash2 } from 'lucide-react'
 import { NewAgendaModal } from '@/components/modals/new-agenda-modal'
 import { NewVentaModal } from '@/components/modals/new-venta-modal'
 import { NewSeguimientoModal } from '@/components/modals/new-seguimiento-modal'
 
 export default function AgendasPage() {
-  const { agendas, toggleShow, toggleCalifica } = useCRM()
+  const { agendas, toggleShow, toggleCalifica, deleteAgenda } = useCRM()
   const [modalAgenda, setModalAgenda] = useState(false)
   const [modalVenta, setModalVenta] = useState(false)
   const [modalSeg, setModalSeg] = useState(false)
@@ -107,6 +107,17 @@ export default function AgendasPage() {
                       className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 text-[11px] transition"
                     >
                       Seguimiento
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm(`¿Eliminar la llamada de ${a.nombre}?`)) {
+                          deleteAgenda(a.id)
+                        }
+                      }}
+                      title="Eliminar llamada"
+                      className="p-1 rounded bg-slate-800 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 text-[11px] transition inline-flex items-center align-middle"
+                    >
+                      <Trash2 className="h-3 w-3" />
                     </button>
                   </td>
                 </tr>

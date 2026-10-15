@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { useCRM } from '@/context/crm-context'
-import { DollarSign, Plus, CheckCircle2, TrendingUp } from 'lucide-react'
+import { DollarSign, Plus, CheckCircle2, TrendingUp, Trash2 } from 'lucide-react'
 import { NewVentaModal } from '@/components/modals/new-venta-modal'
 
 export default function VentasPage() {
-  const { ventas, metricas } = useCRM()
+  const { ventas, metricas, deleteVenta } = useCRM()
   const [modalVenta, setModalVenta] = useState(false)
 
   const saldosPendientes = ventas.reduce((acc, v) => acc + (Number(v.saldo_pendiente) || 0), 0)
@@ -72,6 +72,7 @@ export default function VentasPage() {
                 <th className="px-4 py-3">Closer / Setter</th>
                 <th className="px-4 py-3">Plan Cuotas</th>
                 <th className="px-4 py-3">Notas</th>
+                <th className="px-4 py-3 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
@@ -88,11 +89,24 @@ export default function VentasPage() {
                   <td className="px-4 py-3">{v.closer} / {v.setter}</td>
                   <td className="px-4 py-3 capitalize">{v.plan_cuotas.replace(/_/g, ' ')}</td>
                   <td className="px-4 py-3 text-slate-400 max-w-xs truncate">{v.notas || '-'}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => {
+                        if (confirm(`¿Eliminar la venta de ${v.cliente_nombre}?`)) {
+                          deleteVenta(v.id)
+                        }
+                      }}
+                      title="Eliminar venta"
+                      className="p-1 rounded bg-slate-800 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 text-[11px] transition inline-flex items-center"
+                    >
+                      <Trash2 className="h-3 w-3" />
+                    </button>
+                  </td>
                 </tr>
               ))}
               {ventas.length === 0 && (
                 <tr>
-                  <td colSpan={9} className="text-center py-10 text-slate-500">No hay ventas registradas</td>
+                  <td colSpan={10} className="text-center py-10 text-slate-500">No hay ventas registradas</td>
                 </tr>
               )}
             </tbody>

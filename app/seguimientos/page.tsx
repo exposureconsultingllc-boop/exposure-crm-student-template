@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import { useCRM } from '@/context/crm-context'
-import { Clock, Plus, CheckCircle2 } from 'lucide-react'
+import { Clock, Plus, CheckCircle2, Trash2 } from 'lucide-react'
 import { NewSeguimientoModal } from '@/components/modals/new-seguimiento-modal'
 
 export default function SeguimientosPage() {
-  const { seguimientos, toggleSeguimientoCompletado } = useCRM()
+  const { seguimientos, toggleSeguimientoCompletado, deleteSeguimiento } = useCRM()
   const [modalSeg, setModalSeg] = useState(false)
   const [filtro, setFiltro] = useState<'todos' | 'pendientes' | 'realizados'>('pendientes')
 
@@ -100,6 +100,17 @@ export default function SeguimientosPage() {
                       }`}
                     >
                       {s.estado === 'pendiente' ? 'Marcar Listo' : 'Reabrir'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (confirm(`¿Eliminar el seguimiento de ${s.nombre_contacto}?`)) {
+                          deleteSeguimiento(s.id)
+                        }
+                      }}
+                      title="Eliminar seguimiento"
+                      className="p-1.5 rounded bg-slate-800 hover:bg-rose-500/20 text-slate-500 hover:text-rose-400 text-[11px] transition inline-flex items-center ml-2"
+                    >
+                      <Trash2 className="h-3 w-3" />
                     </button>
                   </td>
                 </tr>
