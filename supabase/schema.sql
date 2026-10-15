@@ -16,6 +16,7 @@ create table if not exists public.leads (
   campana text,
   estado text not null default 'nuevo', -- nuevo, en_conversacion, agendado, no_califica, perdido
   ingreso_mensual text,
+  intentos_previos text,
   inversion_disponible text,
   problema_actual text,
   urgencia text,
@@ -24,6 +25,8 @@ create table if not exists public.leads (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.leads add column if not exists intentos_previos text;
 
 -- 2. AGENDAS / LLAMADAS
 create table if not exists public.agendas (
@@ -44,6 +47,7 @@ create table if not exists public.agendas (
   estado text not null default 'agendada', -- agendada, cancelada, no_show, realizada_sin_cierre, venta_cerrada
   motivo_no_cierre text,
   ingreso_mensual text,
+  intentos_previos text,
   inversion_disponible text,
   problema_actual text,
   urgencia text,
@@ -52,6 +56,8 @@ create table if not exists public.agendas (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.agendas add column if not exists intentos_previos text;
 
 -- 3. VENTAS Y CAJA
 create table if not exists public.ventas (
@@ -120,6 +126,17 @@ create table if not exists public.operaciones_tareas (
   notas text,
   created_at timestamptz not null default now()
 );
+
+-- 7. CONFIGURACION GENERAL (MARKETING & METRICAS)
+create table if not exists public.configuracion (
+  id text primary key default 'general',
+  inversion_ads numeric not null default 0,
+  updated_at timestamptz not null default now()
+);
+
+insert into public.configuracion (id, inversion_ads)
+values ('general', 0)
+on conflict (id) do nothing;
 
 -- INDICES DE RENDIMIENTO
 create index if not exists idx_leads_fecha on public.leads (created_at);
