@@ -145,3 +145,69 @@ create index if not exists idx_ventas_fecha on public.ventas (fecha);
 create index if not exists idx_seguimientos_fecha on public.seguimientos (fecha_proximo_contacto);
 create index if not exists idx_clientes_estado on public.clientes (estado);
 create index if not exists idx_tareas_estado on public.operaciones_tareas (estado);
+
+-- ==============================================================
+-- 8. SEGURIDAD Y POLÍTICAS (ROW LEVEL SECURITY)
+-- Solo usuarios autenticados (dueño y equipo) pueden leer y escribir.
+-- La clave 'anon' pública NO tiene acceso sin login.
+-- ==============================================================
+
+alter table public.leads enable row level security;
+alter table public.agendas enable row level security;
+alter table public.ventas enable row level security;
+alter table public.seguimientos enable row level security;
+alter table public.clientes enable row level security;
+alter table public.operaciones_tareas enable row level security;
+alter table public.configuracion enable row level security;
+
+-- Eliminar políticas previas para permitir re-ejecución sin errores (idempotente)
+drop policy if exists "Acceso total para usuarios autenticados" on public.leads;
+drop policy if exists "Acceso total para usuarios autenticados" on public.agendas;
+drop policy if exists "Acceso total para usuarios autenticados" on public.ventas;
+drop policy if exists "Acceso total para usuarios autenticados" on public.seguimientos;
+drop policy if exists "Acceso total para usuarios autenticados" on public.clientes;
+drop policy if exists "Acceso total para usuarios autenticados" on public.operaciones_tareas;
+drop policy if exists "Acceso total para usuarios autenticados" on public.configuracion;
+
+-- Crear políticas estrictas para usuarios logueados
+create policy "Acceso total para usuarios autenticados"
+  on public.leads for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "Acceso total para usuarios autenticados"
+  on public.agendas for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "Acceso total para usuarios autenticados"
+  on public.ventas for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "Acceso total para usuarios autenticados"
+  on public.seguimientos for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "Acceso total para usuarios autenticados"
+  on public.clientes for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "Acceso total para usuarios autenticados"
+  on public.operaciones_tareas for all
+  to authenticated
+  using (true)
+  with check (true);
+
+create policy "Acceso total para usuarios autenticados"
+  on public.configuracion for all
+  to authenticated
+  using (true)
+  with check (true);
