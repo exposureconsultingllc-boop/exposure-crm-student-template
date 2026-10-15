@@ -1,14 +1,15 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
   BarChart3, Trello, Users, Calendar, DollarSign, Clock, 
   Plus, RotateCcw, Megaphone, UserCheck, CheckSquare, Sparkles,
-  Database, HardDrive, AlertTriangle, X, Trash2, UploadCloud
+  Database, HardDrive, AlertTriangle, X, Trash2, UploadCloud, LogOut
 } from 'lucide-react'
 import { useCRM } from '@/context/crm-context'
+import { supabase } from '@/lib/supabase'
 import { NewLeadModal } from '@/components/modals/new-lead-modal'
 import { NewAgendaModal } from '@/components/modals/new-agenda-modal'
 import { NewVentaModal } from '@/components/modals/new-venta-modal'
@@ -44,6 +45,17 @@ export function CRMHeader() {
   const [modalCliente, setModalCliente] = useState(false)
   const [modalTarea, setModalTarea] = useState(false)
   const [isSyncing, setIsSyncing] = useState(false)
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  
+  useEffect(() => {
+    if (!isConfigured || !supabase) return
+    supabase.auth.getUser().then(({ data }) => setCurrentUser(data.user ?? null))
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUser(session?.user ?? null)
+    })
+    return () => subscription.unsubscribe()
+  }, [isConfigured])
+
 
   const liteNav = [
     { href: '/', label: 'Dirección Lite', icon: BarChart3 },
@@ -246,6 +258,22 @@ export function CRMHeader() {
               >
                 <RotateCcw className="h-3.5 w-3.5" />
               </button>
+
+                            {/* CERRAR SESION SI HAY USUARIO AUTENTICADO */}
+              {isConfigured && currentUser && (
+                <button
+                  onClick={async () => {
+                    if (confirm('¿Cerrar sesión?')) {
+                      await supabase?.auth.signOut()
+                    }
+                  }}
+                  title={`Cerrar sesión (${currentUser.email})`}
+                  className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-rose-400 hover:border-rose-500/40 text-xs font-semibold transition"
+                >
+                  <LogOut className="h-3.5 w-3.5 text-rose-400" />
+                  <span className="hidden md:inline text-[11px] text-slate-300">Salir</span>
+                </button>
+              )}
 
               {/* BOTON EMPEZAR DE CERO */}
               <button
